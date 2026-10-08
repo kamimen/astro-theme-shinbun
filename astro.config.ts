@@ -6,8 +6,8 @@ import rehypeFigure from "./src/plugins/rehype-figure.ts";
 import config from "./shinbun.config.ts";
 
 export default defineConfig({
-  site: config.site.url,
-  base: config.site.base ?? "/",
+  site: process.env.SITE_URL || config.site.url,
+  base: process.env.SITE_BASE || config.site.base || "/",
   trailingSlash: "always",
   integrations: [mdx(), sitemap()],
   prefetch: { prefetchAll: true, defaultStrategy: "hover" },
