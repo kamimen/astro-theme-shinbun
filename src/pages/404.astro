@@ -1,0 +1,15 @@
+---
+import { withBase } from "../utils/url.ts";
+import Layout from "../layouts/Layout.astro";
+import config from "../config.ts";
+import { ja } from "../i18n/ja.ts";
+---
+
+<Layout title={ja.notFound} section="404">
+  <main class="sb-page post-page">
+    <article class="sb-article post" data-sb-span={config.paper.dan}>
+      <h1 class="sb-headline sb-headline--l">{ja.notFound}</h1>
+      <p><a href={withBase("/")}>{ja.backToTop}</a></p>
+    </article>
+  </main>
+</Layout>

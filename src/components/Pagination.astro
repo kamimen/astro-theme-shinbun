@@ -1,0 +1,21 @@
+---
+import { ja } from "../i18n/ja.ts";
+
+interface Props {
+  page: number;
+  pages: number;
+  base: string;
+  first?: string;
+}
+
+const { page, pages, base, first = base } = Astro.props;
+const href = (n: number) => (n === 1 ? first : `${base}${n}/`);
+---
+
+{pages > 1 && (
+  <nav class="pagination" aria-label="ページ送り">
+    {page > 1 ? <a href={href(page - 1)} rel="prev">← {ja.newer}</a> : <span></span>}
+    <span>{ja.page(page, pages)}</span>
+    {page < pages ? <a href={href(page + 1)} rel="next">{ja.older} →</a> : <span></span>}
+  </nav>
+)}

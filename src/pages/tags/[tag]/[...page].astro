@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import PostList from "../../../components/PostList.astro";
+import Pagination from "../../../components/Pagination.astro";
+import config from "../../../config.ts";
+import { ja } from "../../../i18n/ja.ts";
+import { tagHref } from "../../../utils/format.ts";
+import { paginate, postsByTag, publishedPosts, uniqueTags } from "../../../utils/posts.ts";
+
+export async function getStaticPaths() {
+  const posts = publishedPosts(await getCollection("posts"), { scheduledMargin: config.posts.scheduledMargin });
+  return uniqueTags(posts).flatMap(({ tag }) => {
+    const { pages } = paginate(postsByTag(posts, tag), config.posts.perPage, 1);
+    return Array.from({ length: pages }, (_, i) => ({ params: { tag, page: i === 0 ? undefined : String(i + 1) }, props: { tag } }));
+  });
+}
+
+const { tag } = Astro.props;
+const posts = publishedPosts(await getCollection("posts"), { dev: import.meta.env.DEV, scheduledMargin: config.posts.scheduledMargin });
+const { items, page, pages } = paginate(postsByTag(posts, tag), config.posts.perPage, Number(Astro.params.page ?? 1));
+---
+
+<Layout title={ja.tagTitle(tag)} section={tag}>
+  <PostList posts={items} />
+  <Pagination page={page} pages={pages} base={tagHref(tag)} />
+</Layout>

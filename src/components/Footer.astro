@@ -1,0 +1,12 @@
+---
+import { withBase } from "../utils/url.ts";
+import config from "../config.ts";
+---
+
+<footer class="site-footer">
+  <span>© {new Date().getFullYear()} {config.site.author}</span>
+  <span class="footer-links">
+    <a href={withBase("/rss.xml")}>RSS</a>
+    {config.socials.map((s) => <a href={s.url} rel="noopener">{s.name}</a>)}
+  </span>
+</footer>

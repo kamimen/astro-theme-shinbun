@@ -1,0 +1,27 @@
+---
+import { withBase } from "../utils/url.ts";
+import config from "../config.ts";
+import { ja } from "../i18n/ja.ts";
+import { formatDateWithWeekday } from "../utils/format.ts";
+
+interface Props {
+  postCount: number;
+  latest?: Date | undefined;
+}
+
+const { site, masthead } = config;
+const { postCount, latest } = Astro.props;
+---
+
+<header class="sb-masthead">
+  <div class="sb-masthead__side">
+    {site.subtitle && <span>{site.subtitle}</span>}
+    {masthead.left.map((t) => <span>{t}</span>)}
+  </div>
+  <h1 class="sb-masthead__title"><a href={withBase("/")}>{site.title}</a></h1>
+  <div class="sb-masthead__side sb-masthead__side--end">
+    <span>{ja.posts(postCount)}</span>
+    {latest && <span>最終更新 {formatDateWithWeekday(latest, site.timezone)}</span>}
+    {masthead.right.map((t) => <span>{t}</span>)}
+  </div>
+</header>

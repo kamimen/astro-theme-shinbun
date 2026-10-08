@@ -1,0 +1,18 @@
+---
+import { withBase } from "../utils/url.ts";
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import PostList from "../components/PostList.astro";
+import Pagination from "../components/Pagination.astro";
+import config from "../config.ts";
+import { ja } from "../i18n/ja.ts";
+import { paginate, publishedPosts } from "../utils/posts.ts";
+
+const posts = publishedPosts(await getCollection("posts"), { dev: import.meta.env.DEV, scheduledMargin: config.posts.scheduledMargin });
+const { items, page, pages } = paginate(posts, config.posts.perPage, 1);
+---
+
+<Layout section={ja.top}>
+  <PostList posts={items} lead />
+  <Pagination page={page} pages={pages} base={withBase("/posts/page/")} first={withBase("/")} />
+</Layout>

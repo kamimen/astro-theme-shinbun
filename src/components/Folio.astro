@@ -1,0 +1,22 @@
+---
+import { withBase } from "../utils/url.ts";
+import config from "../config.ts";
+import { ja } from "../i18n/ja.ts";
+
+interface Props {
+  section?: string;
+}
+
+const { section = "" } = Astro.props;
+const path = Astro.url.pathname;
+---
+
+<nav class="sb-folio" aria-label="メニュー">
+  <span class="folio-left">
+    {section && <span class="sb-folio__section">{section}</span>}
+  </span>
+  <span class="folio-right">
+    {config.nav.map((item) => <a href={withBase(item.href)} aria-current={path === withBase(item.href) ? "page" : undefined}>{item.label}</a>)}
+    {config.features.darkMode && <button type="button" data-theme-toggle aria-pressed="false" class="theme-toggle"><span class="when-light">{ja.darkMode}</span><span class="when-dark">{ja.lightMode}</span></button>}
+  </span>
+</nav>

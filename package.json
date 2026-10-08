@@ -1,0 +1,43 @@
+{
+  "name": "astro-theme-shinbun",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "日本の新聞の紙面のように書ける、Astro のブログテーマ。shinbun.css を使う。",
+  "author": "kiwamizamurai",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kamimen/astro-theme-shinbun.git"
+  },
+  "homepage": "https://github.com/kamimen/astro-theme-shinbun",
+  "bugs": {
+    "url": "https://github.com/kamimen/astro-theme-shinbun/issues"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check",
+    "test": "node --test test/*.test.ts",
+    "new-post": "node scripts/new-post.ts",
+    "update-theme": "node scripts/update-theme.ts"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.2",
+    "@astrojs/mdx": "^8.0.3",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.7",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^26.6.4",
+    "typescript": "^6.0.3"
+  }
+}

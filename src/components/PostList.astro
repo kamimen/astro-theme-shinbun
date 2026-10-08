@@ -1,0 +1,20 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ArticleCard from "./ArticleCard.astro";
+import config from "../config.ts";
+
+interface Props {
+  posts: CollectionEntry<"posts">[];
+  lead?: boolean;
+}
+
+const { posts, lead = false } = Astro.props;
+const dan = config.paper.dan;
+const card = Math.max(2, Math.floor(dan / 3));
+---
+
+<main class="sb-page">
+  {posts.map((post, i) => (
+    <ArticleCard post={post} lead={lead && i === 0} span={lead && i === 0 ? dan - card : card} />
+  ))}
+</main>

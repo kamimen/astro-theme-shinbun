@@ -1,0 +1,30 @@
+---
+import { withBase } from "../utils/url.ts";
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import config from "../config.ts";
+import DateText from "./DateText.astro";
+import { tagHref } from "../utils/format.ts";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  span?: number;
+  lead?: boolean;
+}
+
+const { post, span = 2, lead = false } = Astro.props;
+const { data } = post;
+const kicker = data.kicker ?? data.tags[0];
+---
+
+<article class:list={["sb-article", { "sb-article--lead": lead }]} data-sb-span={span}>
+  {kicker && <p class="sb-kicker"><a href={tagHref(data.tags[0] ?? kicker)}>{kicker}</a></p>}
+  <h2 class:list={["sb-headline", lead ? "sb-headline--l" : "sb-headline--s"]}><a href={withBase(`/posts/${post.id}/`)}>{data.title}</a></h2>
+  <p class="sb-dateline">
+    {data.dateline && <span>{data.dateline}＝</span>}<DateText date={data.pubDatetime} timeZone={config.site.timezone} />
+  </p>
+  {data.image && (
+    <figure class="sb-photo"><Image class="sb-photo__img" src={data.image} alt={data.imageAlt} width={lead ? 900 : 480} height={lead ? 506 : 270} loading={lead ? "eager" : "lazy"} fetchpriority={lead ? "high" : "auto"} /></figure>
+  )}
+  <p>{data.description}</p>
+</article>

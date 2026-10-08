@@ -1,0 +1,70 @@
+---
+import { withBase } from "../utils/url.ts";
+import { Image } from "astro:assets";
+import type { MarkdownHeading } from "astro";
+import type { CollectionEntry } from "astro:content";
+import config, { danFor } from "../config.ts";
+import { ja } from "../i18n/ja.ts";
+import DateText from "./DateText.astro";
+import { tagHref, verticalHeadlineSize } from "../utils/format.ts";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  newer: CollectionEntry<"posts"> | null;
+  older: CollectionEntry<"posts"> | null;
+  related: CollectionEntry<"posts">[];
+  headings?: MarkdownHeading[];
+}
+
+const { post, newer, older, related, headings = [] } = Astro.props;
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const { data } = post;
+const writing = data.writing ?? config.writing;
+const dan = danFor(writing);
+const kicker = data.kicker ?? data.tags[0];
+const other = writing === "vertical" ? "horizontal" : "vertical";
+---
+
+<main class="sb-page post-page">
+  <article class="sb-article post" data-sb-span={dan}>
+    {kicker && <p class="sb-kicker"><a href={tagHref(data.tags[0] ?? kicker)}>{kicker}</a></p>}
+    <h1 class:list={["sb-headline", `sb-headline--${writing === "vertical" ? verticalHeadlineSize(data.title) : "xl"}`]}>{data.title}</h1>
+    <p class="sb-dateline">
+      {data.dateline && <span>{data.dateline}＝</span>}<DateText date={data.pubDatetime} timeZone={config.site.timezone} />
+      {data.modDatetime && <span>（更新 <DateText date={data.modDatetime} timeZone={config.site.timezone} />）</span>}
+    </p>
+    <p class="sb-lead">{data.description}</p>
+    {data.image && (
+      <figure class="sb-photo"><Image class="sb-photo__img" src={data.image} alt={data.imageAlt} width={1200} height={675} loading="eager" fetchpriority="high" /></figure>
+    )}
+    <slot />
+    {(data.byline ?? config.site.author) && <p class="sb-byline">（{data.byline ?? config.site.author}）</p>}
+  </article>
+
+  {toc.length >= 3 && (
+    <aside class="sb-box post-meta" data-sb-span={writing === "vertical" ? 2 : dan}>
+      <p class="sb-box__title">{ja.toc}</p>
+      <ol class="plain-list toc">{toc.map((h) => <li class={`depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+    </aside>
+  )}
+
+  <aside class="sb-box post-meta" data-sb-span={writing === "vertical" ? 2 : dan}>
+    <p class="sb-box__title">{ja.tags}</p>
+    <p class="tag-list">{data.tags.map((t) => <a href={tagHref(t)}>{t}</a>)}</p>
+    <p>
+      <a class="writing-toggle" href={`?writing=${other}`} data-writing-toggle={other} hidden>{other === "horizontal" ? ja.readHorizontal : ja.readVertical}</a>
+    </p>
+  </aside>
+
+  {related.length > 0 && (
+    <aside class="sb-box post-meta" data-sb-span={writing === "vertical" ? 2 : dan}>
+      <p class="sb-box__title">{ja.related}</p>
+      <ul class="plain-list">{related.map((r) => <li><a href={withBase(`/posts/${r.id}/`)}>{r.data.title}</a></li>)}</ul>
+    </aside>
+  )}
+
+  <nav class="post-nav" aria-label="前後の記事" data-sb-span={dan}>
+    {newer ? <a href={withBase(`/posts/${newer.id}/`)} rel="prev">← {ja.newer}: {newer.data.title}</a> : <span></span>}
+    {older ? <a href={withBase(`/posts/${older.id}/`)} rel="next">{ja.older}: {older.data.title} →</a> : <span></span>}
+  </nav>
+</main>

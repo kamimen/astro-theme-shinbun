@@ -1,0 +1,12 @@
+---
+import { formatDate, formatDateKanji, isoDate } from "../utils/format.ts";
+
+interface Props {
+  date: Date;
+  timeZone: string;
+}
+
+const { date, timeZone } = Astro.props;
+---
+
+<time datetime={isoDate(date)}><span class="date-h">{formatDate(date, timeZone)}</span><span class="date-v">{formatDateKanji(date, timeZone)}</span></time>

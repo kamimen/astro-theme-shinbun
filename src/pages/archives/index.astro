@@ -1,0 +1,27 @@
+---
+import { withBase } from "../../utils/url.ts";
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import config from "../../config.ts";
+import { ja } from "../../i18n/ja.ts";
+import { formatDate, isoDate } from "../../utils/format.ts";
+import { groupByMonth, publishedPosts } from "../../utils/posts.ts";
+
+const posts = publishedPosts(await getCollection("posts"), { dev: import.meta.env.DEV, scheduledMargin: config.posts.scheduledMargin });
+const groups = groupByMonth(posts, config.site.timezone);
+---
+
+<Layout title={ja.archives} section={ja.archives}>
+  <main class="sb-page list-page">
+    {groups.map((g) => (
+      <section class="sb-box month" data-sb-span={config.paper.dan}>
+        <p class="sb-box__title">{g.label}</p>
+        <ul class="plain-list">
+          {g.posts.map((p) => (
+            <li><time datetime={isoDate(p.data.pubDatetime)}>{formatDate(p.data.pubDatetime, config.site.timezone)}</time>　<a href={withBase(`/posts/${p.id}/`)}>{p.data.title}</a></li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </main>
+</Layout>

@@ -1,0 +1,25 @@
+---
+title: 記事に写真とコードを入れる
+description: MDX では、画像の部品（Image）と、コードのブロックを、そのまま使える。
+pubDatetime: 2026-09-20T09:00:00+09:00
+tags: [制作メモ]
+---
+
+import { Image } from "astro:assets";
+import river from "../../assets/photos/river.jpg";
+
+## 写真を入れる
+
+Markdown の `![]()` で書いた画像は、自動で最適化されます。MDX なら、`Image` の部品も使えます。
+
+<Image src={river} alt="夜の川沿い（ダミー画像）" width={900} height={600} />
+
+## コードを入れる
+
+```ts
+export function isPublished(post: PostLike): boolean {
+  return !post.data.draft;
+}
+```
+
+昼と夜の紙面で、コードの色も切り替わります。

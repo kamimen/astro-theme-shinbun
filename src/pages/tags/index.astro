@@ -1,0 +1,22 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import config from "../../config.ts";
+import { ja } from "../../i18n/ja.ts";
+import { tagHref } from "../../utils/format.ts";
+import { publishedPosts, uniqueTags } from "../../utils/posts.ts";
+
+const posts = publishedPosts(await getCollection("posts"), { dev: import.meta.env.DEV, scheduledMargin: config.posts.scheduledMargin });
+const tags = uniqueTags(posts);
+---
+
+<Layout title={ja.tags} section={ja.tags}>
+  <main class="sb-page list-page">
+    <section class="sb-box" data-sb-span={config.paper.dan}>
+      <p class="sb-box__title">{ja.tags}</p>
+      <ul class="plain-list tag-index">
+        {tags.map(({ tag, count }) => <li><a href={tagHref(tag)}>{tag}</a>（{count}）</li>)}
+      </ul>
+    </section>
+  </main>
+</Layout>

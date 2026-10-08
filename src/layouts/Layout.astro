@@ -1,0 +1,98 @@
+---
+import { withBase } from "../utils/url.ts";
+import "../../vendor/shinbun.min.css";
+import "../styles/blog.css";
+import config, { danFor } from "../config.ts";
+import Masthead from "../components/Masthead.astro";
+import Folio from "../components/Folio.astro";
+import Footer from "../components/Footer.astro";
+import { ClientRouter } from "astro:transitions";
+import { getCollection } from "astro:content";
+import { publishedPosts } from "../utils/posts.ts";
+import type { Writing } from "../types.ts";
+
+interface Props {
+  title?: string;
+  description?: string;
+  section?: string;
+  writing?: Writing;
+  type?: "website" | "article";
+  image?: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+const { site } = config;
+const {
+  title,
+  description = site.description,
+  section = "",
+  writing = config.writing,
+  type = "website",
+  image,
+  jsonLd,
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${site.title}` : site.title;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const posts = publishedPosts(await getCollection("posts"), { dev: import.meta.env.DEV, scheduledMargin: config.posts.scheduledMargin });
+const latest = posts[0]?.data.pubDatetime;
+const ogImage = image ? new URL(image, Astro.site).href : undefined;
+const danVar = writing === "vertical" ? "--sb-dan" : "--sb-dan-h";
+const dan = danFor(writing);
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.author} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href={new URL(withBase("/rss.xml"), Astro.site)} />
+    <link rel="sitemap" href={withBase("/sitemap-index.xml")} />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.title} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+    {config.features.transitions && <ClientRouter />}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <script is:inline>
+      (() => {
+        try {
+          const stored = localStorage.getItem("theme");
+          const dark = stored ? stored === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+        } catch {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div
+      class="sb-paper"
+      data-sb-writing={writing}
+      data-sb-auto-tcy={writing === "vertical" ? "" : undefined}
+      data-dan-h={config.paper.dan}
+      data-dan-v={config.paper.verticalDan}
+      style={`${danVar}: ${dan}; --sb-fs: ${config.paper.fontSize}; --sb-post-cols: ${config.posts.columns};`}
+    >
+      <Masthead postCount={posts.length} latest={latest} />
+      <Folio section={section} />
+      <slot />
+      <Footer />
+    </div>
+    <script>
+      import "../../vendor/shinbun.js";
+      import "../scripts/theme.ts";
+      import "../scripts/writing.ts";
+    </script>
+  </body>
+</html>

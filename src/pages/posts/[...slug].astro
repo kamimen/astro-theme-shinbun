@@ -1,0 +1,46 @@
+---
+import { getImage } from "astro:assets";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PostBody from "../../components/PostBody.astro";
+import config from "../../config.ts";
+import { publishedPosts, postsByTag } from "../../utils/posts.ts";
+
+export async function getStaticPaths() {
+  const posts = publishedPosts(await getCollection("posts"), { scheduledMargin: config.posts.scheduledMargin });
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: posts[i - 1] ?? null, older: posts[i + 1] ?? null, related: postsByTag(posts, post.data.tags[0] ?? "").filter((p) => p.id !== post.id).slice(0, 3) },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"posts">;
+  newer: CollectionEntry<"posts"> | null;
+  older: CollectionEntry<"posts"> | null;
+  related: CollectionEntry<"posts">[];
+}
+
+const { post, newer, older, related } = Astro.props;
+const { Content, headings } = await render(post);
+const { data } = post;
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const og = data.image ? await getImage({ src: data.image, width: 1200, height: 630, fit: "cover", format: "jpg" }) : undefined;
+const imageUrl = og?.src;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: data.title,
+  description: data.description,
+  datePublished: data.pubDatetime.toISOString(),
+  dateModified: (data.modDatetime ?? data.pubDatetime).toISOString(),
+  author: { "@type": "Person", name: config.site.author },
+  mainEntityOfPage: url,
+};
+---
+
+<Layout title={data.title} description={data.description} section={data.tags[0] ?? ""} writing={data.writing ?? config.writing} type="article" image={imageUrl} jsonLd={jsonLd}>
+  <PostBody post={post} newer={newer} older={older} related={related} headings={headings}>
+    <Content />
+  </PostBody>
+</Layout>
