@@ -75,7 +75,11 @@ Posts go in `src/content/posts/`.
 
 ## Getting started
 
-1. Use this repository as a GitHub template, or fork it
+1. Use this repository as a GitHub template, or fork it. You can also create a project with:
+
+   ```sh
+   npm create astro@latest -- --template kamimen/astro-theme-shinbun
+   ```
 2. Run:
 
    ```sh

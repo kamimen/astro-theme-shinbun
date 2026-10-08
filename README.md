@@ -67,7 +67,11 @@ RSS、サイトマップ、robots.txt、canonical、Open Graph、構造化デー
 
 ## はじめ方
 
-1. このリポジトリを、GitHub のテンプレートとして使うか、fork します
+1. このリポジトリを、GitHub のテンプレートとして使うか、fork します。次のコマンドでも作れます
+
+   ```sh
+   npm create astro@latest -- --template kamimen/astro-theme-shinbun
+   ```
 2. 次を実行します
 
    ```sh
