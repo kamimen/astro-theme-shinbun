@@ -1,151 +1,159 @@
-![astro-theme-shinbun のアイコン](assets/icon.svg)
+![astro-theme-shinbun icon](assets/icon.svg)
 
 # astro-theme-shinbun
 
-新聞の紙面のように書ける、日本語のブログの Astro テーマです。紙面の部品は [shinbun.css](https://github.com/kamimen/shinbun-css) を使っています。
+An Astro blog theme for writing in Japanese in the style of a newspaper page (新聞の紙面). It supports horizontal writing (横組み, *yokogumi*) and vertical writing (縦組み, *tategumi*). The page parts come from [shinbun.css](https://github.com/kamimen/shinbun-css).
 
 ![license: MIT](https://img.shields.io/badge/license-MIT-blue) ![Astro 7](https://img.shields.io/badge/Astro-7-ff5d01) ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6) ![tested: Chrome](https://img.shields.io/badge/tested-Chrome-brightgreen) ![not tested: Firefox, Safari](https://img.shields.io/badge/not%20tested-Firefox%20%C2%B7%20Safari-red)
 
-日本語 | [English](README_en.md)
+English | [日本語](README_ja.md)
 
-![トップページ（横組み）](assets/preview-home.png)
+![Home page (horizontal writing)](assets/preview-home.png)
 
-![記事ページ（縦組み）](assets/preview-vertical.png)
+![Post page (vertical writing)](assets/preview-vertical.png)
 
-見本の内容（人物・団体・出来事・写真）は、すべて架空です。
+People, organizations, events and photos in the sample are fictional.
 
-## 特徴
+## Features
 
-### 紙面
+**The page**
+- [x] The blog name becomes the nameplate, and the newest post becomes the top story
+- [x] Tags become the "sections" of the paper (a page per section, and an index)
+- [x] Horizontal writing is the default. Each post can be shown in vertical writing
+- [x] Readers can switch between horizontal and vertical writing on a post page
+- [x] Light and dark pages, and the choice is remembered
 
-ブログの名前が題字になり、最新の記事がトップ記事になります。タグは新聞の「面」にあたり、面ごとのページと一覧があります。既定は横組みで、記事ごとに縦組みを選べます。読む人は、記事ページで横組みと縦組みを切り替えられます。昼と夜の紙面も切り替えられ、選んだ紙面は次に開いたときも保たれます。
+**Writing**
+- [x] Markdown and MDX (post frontmatter is type-checked with Astro content collections)
+- [x] Drafts (`draft: true`) and posts dated in the future are not published
+- [x] A table of contents box for long posts
+- [x] Code blocks switch colors between the light and dark pages (Shiki)
+- [x] `npm run new-post` creates a post template
 
-### 書く
+**Images**
+- [x] Astro's image optimization (WebP, `srcset`, lazy loading)
+- [x] Top story photo, list thumbnails, images in the post body (with captions), and OG images
 
-記事は Markdown と MDX で書きます。frontmatter は、Astro のコンテンツコレクションで型を検査します。下書き（`draft: true`）と、公開日時が先の記事は公開しません。長い記事には、見出しの一覧（目次）が自動で付きます。コードのブロックは、昼と夜の紙面で色が切り替わります（Shiki）。記事の雛形は `npm run new-post` で作れます。
+**Publishing**
+- [x] RSS, a sitemap, robots.txt, canonical URLs, Open Graph, and structured data (JSON-LD)
+- [x] Page transitions (`ClientRouter`) and link prefetching
+- [x] Base path support (`site.base`), so it works on GitHub Pages project pages
+- [x] One configuration file: `shinbun.config.ts`
 
-### 画像
-
-Astro の画像最適化（WebP、`srcset`、遅延読み込み）に対応しています。トップ記事の写真、一覧のサムネイル、本文の画像（キャプションつき）、OG 画像に使えます。
-
-### 公開
-
-RSS、サイトマップ、robots.txt、canonical、Open Graph、構造化データ（JSON-LD）を出力します。ページ遷移（`ClientRouter`）とリンクの先読みもあります。公開する場所の基準パス（`site.base`）に対応するので、GitHub Pages のプロジェクトページでも使えます。設定は `shinbun.config.ts` の 1 ファイルです。
-
-## プロジェクトの構成
+## Project structure
 
 ```
 /
 ├── public/
 │   └── favicon.svg
 ├── scripts/
-│   ├── new-post.ts             記事の雛形を作る
-│   ├── update-theme.ts         このテーマの更新を取り込む
-│   └── make-sample-images.ts   見本のダミー画像を作る
+│   ├── new-post.ts             create a post template
+│   ├── update-theme.ts         pull in theme updates
+│   └── make-sample-images.ts   generate the dummy sample images
 ├── src/
-│   ├── assets/photos/          見本の写真
-│   ├── components/             題字、欄外、記事、ページ送りなど
+│   ├── assets/photos/          sample photos
+│   ├── components/             nameplate, folio, article, pagination, ...
 │   ├── content/
 │   │   ├── pages/about.md
-│   │   └── posts/              記事（.md と .mdx）
-│   ├── i18n/ja.ts              画面の文字列
+│   │   └── posts/              posts (.md and .mdx)
+│   ├── i18n/ja.ts              UI strings
 │   ├── layouts/                Layout.astro
-│   ├── pages/                  トップ、記事、タグ、アーカイブ、about、404、RSS
-│   ├── plugins/rehype-figure.ts  本文の画像を写真（figure）にする
-│   ├── scripts/                昼夜の切り替え、縦組み・横組みの切り替え
-│   ├── styles/blog.css         shinbun.css の上に重ねるブログ向けの調整
-│   ├── utils/                  記事の絞り込み、並べ替え、日付など
-│   ├── config.ts               既定値を補った設定
-│   └── content.config.ts       記事の frontmatter の型
-├── test/                       単体テスト
-├── vendor/                     shinbun.css（CSS と JavaScript）
+│   ├── pages/                  home, post, tag, archives, about, 404, RSS
+│   ├── plugins/rehype-figure.ts  turn body images into photos (figure)
+│   ├── scripts/                light/dark switch, horizontal/vertical switch
+│   ├── styles/blog.css         blog adjustments on top of shinbun.css
+│   ├── utils/                  filtering, sorting, dates, ...
+│   ├── config.ts               configuration with defaults filled in
+│   └── content.config.ts       post frontmatter types
+├── test/                       unit tests
+├── vendor/                     shinbun.css (CSS and JavaScript)
 ├── astro.config.ts
-└── shinbun.config.ts           利用者が直す設定
+└── shinbun.config.ts           the file you edit
 ```
 
-記事は、`src/content/posts/` に置きます。
+Posts go in `src/content/posts/`.
 
-## はじめ方
+## Getting started
 
-1. このリポジトリを、GitHub のテンプレートとして使うか、fork します。次のコマンドでも作れます
+1. Use this repository as a GitHub template, or fork it. You can also create a project with:
 
    ```sh
    npm create astro@latest -- --template kamimen/astro-theme-shinbun
    ```
-2. 次を実行します
+2. Run:
 
    ```sh
    npm install
    npm run dev
    ```
 
-3. `shinbun.config.ts` を直します（題字、説明、著者、URL、メニュー）
-4. `npm run new-post <ファイル名>` で、記事の雛形を作ります（`src/content/posts/` に作られます。`draft: true` が付いているので、書き終えたら外します）
-5. `npm run build` で、`dist/` に静的なサイトを作ります
+3. Edit `shinbun.config.ts` (nameplate, description, author, URL, menu)
+4. Run `npm run new-post <file-name>` to create a post (in `src/content/posts/`, with `draft: true`; remove it when you finish)
+5. Run `npm run build` to build a static site in `dist/`
 
-Node.js 22.12 以上が必要です。
+Node.js 22.12 or later is required.
 
-## 設定（`shinbun.config.ts`）
+## Configuration (`shinbun.config.ts`)
 
-| 項目 | 内容 |
+| Option | Meaning |
 |---|---|
-| `site.url`、`site.title`、`site.subtitle`、`site.description`、`site.author` | サイトの情報。`url` は、公開する URL |
-| `site.base` | 公開する場所の基準パス。GitHub Pages のプロジェクトページなら、`"/リポジトリ名/"` |
-| `site.timezone` | 日付を表示するタイムゾーン（既定は `Asia/Tokyo`） |
-| `writing` | サイトの組方向。`"horizontal"`（横組み）または `"vertical"`（縦組み） |
-| `paper.dan`、`paper.verticalDan`、`paper.fontSize` | 横組み・縦組みの段数と、文字の大きさ |
-| `masthead.left`、`masthead.right` | 題字の左右に出す文 |
-| `images.domains` | 最適化を許可する外部の画像のドメイン |
-| `nav`、`socials` | メニューと、フッターのリンク |
-| `posts.perPage`、`posts.columns`、`posts.scheduledMargin` | 1 ページの記事数、記事の段数（既定は 1）、予約投稿を早く出す余裕（ミリ秒） |
-| `features.darkMode`、`features.archives`、`features.transitions` | 夜の紙面の切り替え、アーカイブ、ページ遷移 |
+| `site.url`, `site.title`, `site.subtitle`, `site.description`, `site.author` | Site information. `url` is where you publish |
+| `site.base` | Base path of the site. For GitHub Pages project pages, `"/repository-name/"` |
+| `site.timezone` | Time zone for dates (default `Asia/Tokyo`) |
+| `writing` | Writing direction of the site: `"horizontal"` or `"vertical"` |
+| `paper.dan`, `paper.verticalDan`, `paper.fontSize` | Number of dan (columns) for horizontal and vertical pages, and the font size |
+| `masthead.left`, `masthead.right` | Text on the left and right of the nameplate |
+| `images.domains` | Remote image domains allowed for optimization |
+| `nav`, `socials` | Menu and footer links |
+| `posts.perPage`, `posts.columns`, `posts.scheduledMargin` | Posts per page, columns in a post (default 1), and how early scheduled posts appear (milliseconds) |
+| `features.darkMode`, `features.archives`, `features.transitions` | Dark page switch, archives, and page transitions |
 
-## 記事の frontmatter
+## Post frontmatter
 
 ```yaml
 ---
-title: 見出し
-description: 記事の要点を、一文で。リードとして表示されます
+title: Headline
+description: One sentence about the post. It is shown as the lead
 pubDatetime: 2026-10-07T09:00:00+09:00
-tags: [まちの話, 建築]
-kicker: みどり市        # 見出しの上の肩見出し。省略するとタグの先頭
-dateline: みどり市      # 発信地
-byline: 架空太郎        # 署名。省略するとサイトの著者
-writing: vertical       # この記事だけ縦組みにする
-image: ../../assets/photos/library.jpg   # 記事の写真
-imageAlt: 写真の説明
+tags: [town, architecture]
+kicker: Midori City   # small headline above the headline; defaults to the first tag
+dateline: Midori City # place of dispatch
+byline: Taro Kaku     # byline; defaults to the site author
+writing: vertical     # show only this post in vertical writing
+image: ../../assets/photos/library.jpg   # post photo
+imageAlt: Photo description
 draft: false
 ---
 ```
 
-## 画像
+## Images
 
-- 記事の写真: frontmatter の `image` に、記事の Markdown から見た相対パスで書きます。トップ記事と記事ページに大きく、一覧にはサムネイルで出ます。OG 画像にも使います
-- 本文の画像: Markdown の `![説明](../../assets/x.jpg "キャプション")` で書きます。`src/` の画像は、自動で最適化されます。`"キャプション"` を付けると、写真の説明（`figcaption`）になります
-- MDX: `.mdx` の記事では、`Image` の部品も使えます（見本: `src/content/posts/code-sample.mdx`）
-- 外部の画像: `images.domains` に、許可するドメインを書きます。許可しない画像は、最適化されません
-- `public/` に置いた画像は、最適化されません
+- **Post photo**: set `image` in the frontmatter with a path relative to the post's Markdown file. It appears large on the top story and the post page, as a thumbnail in lists, and as the OG image
+- **Images in the body**: write `![description](../../assets/x.jpg "caption")` in Markdown. Images in `src/` are optimized automatically. A `"caption"` becomes the photo caption (`figcaption`)
+- **MDX**: `.mdx` posts can use the `Image` component (see `src/content/posts/code-sample.mdx`)
+- **Remote images**: list allowed domains in `images.domains`. Images from other domains are not optimized
+- Images in `public/` are not optimized
 
-## 縦組みの記事の書き方
+## Writing vertical posts
 
-- 日付は、縦組みでは漢数字（二〇二六年十月五日）で表示されます
-- 本文の数字は、書いたとおりに表示されます。縦組みの記事では、二桁の数字は縦中横になります。三桁以上や年は、漢数字で書くと読みやすくなります
-- 写真は、縦組みでは高さを抑えて表示します
+- Dates are shown in kanji numerals (二〇二六年十月五日) in vertical writing
+- Numbers in the body are shown as you write them. In vertical posts, two-digit numbers become tate-chu-yoko. For three or more digits, and for years, kanji numerals read better
+- Photos are shown with a limited height in vertical writing
 
-## 色を変える
+## Changing colors
 
-紙面の色は、shinbun.css のトークンで決まっています。`src/styles/blog.css` で上書きします。
+The page colors come from shinbun.css tokens. Override them in `src/styles/blog.css`.
 
 ```css
 .sb-paper {
-  --sb-paper: light-dark(#f4eedd, #17140f);   /* 紙の色（昼、夜） */
-  --sb-ink: light-dark(#1b1812, #eee6d2);     /* 文字の色 */
-  --sb-accent: light-dark(#a02a1f, #e5786b);  /* 肩見出しなどの差し色 */
+  --sb-paper: light-dark(#f4eedd, #17140f);   /* paper color (light, dark) */
+  --sb-ink: light-dark(#1b1812, #eee6d2);     /* text color */
+  --sb-accent: light-dark(#a02a1f, #e5786b);  /* accent such as shoulder headlines */
 }
 ```
 
-トークンの一覧は、[shinbun.css の API](https://github.com/kamimen/shinbun-css/blob/main/docs/API.md) にあります。
+The list of tokens is in the [shinbun.css API](https://github.com/kamimen/shinbun-css/blob/main/docs/API.md).
 
-## ライセンス
+## License
 
 [MIT License](LICENSE)
